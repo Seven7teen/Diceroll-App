@@ -1,11 +1,12 @@
+import 'dart:ui';
+
 import 'package:diceroll/screens/winnerpage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:diceroll/screens/gamepage.dart';
-import 'package:diceroll/screens/registrationpage.dart';
-import 'package:diceroll/components/Mapping.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-// var mp = map_email_username;
+import 'package:diceroll/components/diceCount_mapping.dart';
+import 'package:flutter/services.dart';
 
 class SplashScreen extends StatelessWidget {
   int dicecount;
@@ -15,50 +16,94 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.white,
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'you won',
-                style: TextStyle(fontSize: 60),
+          child: Container(
+            constraints: BoxConstraints.expand(),
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('images/Ace.gif'), fit: BoxFit.cover)),
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                constraints: BoxConstraints.tightFor(height: 230, width: 350),
+                color: Colors.yellow[100],
+                // decoration: BoxDecoration(
+                //     image: DecorationImage(
+                //         image: AssetImage('images/gamegif.gif'),
+                //         fit: BoxFit.cover)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'You Won',
+                      style: TextStyle(
+                          fontSize: 50,
+                          color: Colors.red,
+                          fontFamily: 'PermanentMarker'),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'You took $dicecount steps to reach the 64th block.',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.green,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Restart'),
+                        ),
+                        SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () async {
+                            WinData windata = new WinData(
+                                cnt: dicecount, userEmail: loggedInUser.email);
+                            await windata.paddToCloud();
+                            CollectionReference refer =
+                                FirebaseFirestore.instance.collection('Win');
+                            var winmap;
+                            await refer.doc('winner').get().then((value) {
+                              winmap = value['gameWinner'];
+                            });
+                            CollectionReference ref =
+                                FirebaseFirestore.instance.collection('map');
+                            var mapp;
+                            await ref.doc('mapping').get().then((value) {
+                              mapp = value['mp'];
+                            });
+                            print(winmap);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        WinnerScreen(winmap, mapp)));
+                          },
+                          child: Text('Leaderboard'),
+                        ),
+                        SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            SystemNavigator.pop();
+                          },
+                          child: Text('Quit Game'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('press'),
-              ),
-              Text(
-                '$dicecount ${loggedInUser.email} ',
-                // ${mp[loggedInUser.email]}
-                style: TextStyle(fontSize: 60),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  // UserData userdata;
-                  // var mapp = await userdata.getList();
-                  CollectionReference ref =
-                      FirebaseFirestore.instance.collection('map');
-                  var map;
-                  await ref.doc('mapping').get().then((value) {
-                    map = value['mp'];
-                  });
-                  print(map);
-                  var entryList = map.entries.toList();
-                  print(entryList[0].key);
-                  print(entryList[0].value);
-                  print(entryList[1].key);
-                  print(entryList[1].value);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => WinnerScreen(map)));
-                },
-                child: Text('Leaderboard'),
-              ),
-            ],
+            ),
           ),
         ),
       ),

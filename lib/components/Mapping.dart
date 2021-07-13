@@ -14,7 +14,7 @@ class UserData {
       map = value['mp'];
     });
     print(map);
-    map[userEmail] = username;
+    map[userEmail.toLowerCase()] = username;
     print(map);
     await ref.doc('mapping').update({
       'mp': map,
