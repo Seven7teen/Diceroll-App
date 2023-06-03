@@ -13,4 +13,16 @@ A few resources to get you started if this is your first Flutter project:
 
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+samples, guidance on mobile development, and a full API reference.  
+
+Fig 1  
+<img src="images/login.jpeg" width="200" height="400">  
+
+Fig 2  
+<img src="images/maze page.jpeg" width="200" height="400">  
+
+Fig 3  
+<img src="images/signout.jpeg" width="200" height="400">  
+
+Fig 4  
+<img src="images/leaderboard.jpeg" width="200" height="400">  
